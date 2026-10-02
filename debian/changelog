@@ -1,3 +1,13 @@
+gpodder (3.8.5+tls4) harmattan; urgency=medium
+
+  * streamproxy: relay plain http:// episodes as well, not only https://.
+    A feed may hand out an http:// URL that the server redirects to https,
+    and the player would hit "SSL support not available" one step later.
+    urllib2 follows the redirect, so the player only sees loopback HTTP.
+  * streamproxy: never relay an URL that already points at the relay
+
+ -- Sebastian Matkovich <sebastian.matkovich@gmail.com>  Fri, 02 Oct 2026 09:40:00 +0200
+
 gpodder (3.8.5+tls3) harmattan; urgency=medium
 
   * Stream HTTPS episodes through a local relay (gpodder.streamproxy):

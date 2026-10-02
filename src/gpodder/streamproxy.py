@@ -32,6 +32,11 @@ and the response is streamed back unencrypted over the loopback interface.
 Range requests are passed through in both directions, so seeking keeps
 working.
 
+Plain http:// episodes are relayed as well, not just https:// ones: a feed
+may well hand out an http:// URL that the server then redirects to https,
+and the player would hit the same wall one step later. urllib2 follows the
+redirect for us, so the player only ever sees plain HTTP on loopback.
+
 The server is started lazily on the first register() call and only listens
 on the loopback interface.
 """
@@ -190,6 +195,16 @@ _server = None
 _server_lock = threading.Lock()
 
 
+def _is_own_url(parts):
+    """True if the URL already points at this relay."""
+    if _server is None:
+        return False
+    host = parts.hostname
+    if host not in ('127.0.0.1', 'localhost'):
+        return False
+    return parts.port == _server.server_port
+
+
 def _ensure_server():
     global _server
     with _server_lock:
@@ -212,19 +227,21 @@ def _ensure_server():
 def register(url):
     """Return a loopback http:// URL that relays the given URL.
 
-    Returns the original URL unchanged if relaying is not needed (the URL
-    is already plain http) or not possible (the server cannot be started).
+    Both http:// and https:// are relayed, because a plain http URL may
+    redirect to https and the player cannot follow that. Anything else, an
+    URL that is already relayed, and the case where the server cannot be
+    started are returned unchanged.
     """
     if not url:
         return url
 
-    scheme = urlparse.urlparse(url).scheme.lower()
-    if scheme not in _ALLOWED_SCHEMES:
-        return url
-    if scheme != 'https':
-        # Plain HTTP goes straight to the player
+    parts = urlparse.urlparse(url)
+    if parts.scheme.lower() not in _ALLOWED_SCHEMES:
         return url
     if os.environ.get('GPODDER_NO_STREAM_PROXY'):
+        return url
+    if _is_own_url(parts):
+        # Already relayed, do not build a loop
         return url
 
     server = _ensure_server()

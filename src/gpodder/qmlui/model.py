@@ -107,9 +107,9 @@ class QEpisode(QObject):
             if self._qt_yt_url is None:
                 self._qt_yt_url = youtube.get_real_download_url(
                         self._episode.url)
-            # The media player's gstreamer has no SSL support, so an
-            # https stream has to go through the local relay instead
-            # (gpodder.streamproxy; returns the URL as-is for plain http)
+            # The media player's gstreamer has no SSL support, so the
+            # stream goes through the local relay instead. Plain http is
+            # relayed too: it may redirect to https (gpodder.streamproxy)
             url = streamproxy.register(self._qt_yt_url)
         return convert(url)
 

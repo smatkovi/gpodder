@@ -29,13 +29,15 @@ QML-UI als Cherry-Picks.
    Range-Anfragen gehen in beide Richtungen durch, damit das Springen
    erhalten bleibt. `GPODDER_NO_STREAM_PROXY=1` schaltet ab.
    Der billige Weg von `smatkovi/sr` (https stumpf auf http umschreiben)
-   reicht nicht: ORF leitet http auf https um.
+   reicht nicht: ORF leitet http auf https um. Aus demselben Grund laufen
+   **auch reine http-Adressen** über den Vermittler -- sonst landet die
+   Umleitung einen Schritt später wieder beim Player.
 
 ## Bauen und einspielen
 
     tools/harmattan-tls/build-deb.sh                       # arch + docker ubuntu:20.04
     # Gerät:  sudo apt-get install python-feedparser python-conic   (deps.sh)
-    #         sudo aegis-dpkg -i gpodder_3.8.5+tls3_all.deb
+    #         sudo aegis-dpkg -i gpodder_3.8.5+tls4_all.deb
 
 `debian/compat` steht auf 7 und `dh_builddeb -- -Zgzip`, damit das Paket von
 Harmattans altem dpkg gelesen wird. `tlstest.py` prüft das Shim am Gerät
@@ -45,4 +47,4 @@ Gemessen am N950 (2026-10-02): TLSv1.3 / TLS_AES_256_GCM_SHA384, Abo + Cover
 über HTTPS, Oberfläche per Sitzungsbus-Start > 90 s stabil, Streamen über den
 Vermittler (206 auf Bereichsanfragen, gstreamer spielt).
 
-Veröffentlicht als `harmattan-3.8.5+tls3` in `smatkovi/gpodder`.
+Veröffentlicht als `harmattan-3.8.5+tls4` in `smatkovi/gpodder`.
