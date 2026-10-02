@@ -1,7 +1,7 @@
 import sys, socket, time, urllib2, urllib, logging
 logging.basicConfig(level=logging.INFO)
-sys.path.insert(0, '/home/user/tlsfix')
-import tlsfix
+# run with the package installed (or PYTHONPATH=src from a checkout)
+from gpodder import tlsfix
 print 'install ->', tlsfix.install()
 socket.setdefaulttimeout(15)
 urls = [
