@@ -10,7 +10,9 @@
 set -e
 HERE=$(cd "$(dirname "$0")/../.." && pwd)
 VER=$(head -1 "$HERE/debian/changelog" | sed 's/.*(\(.*\)).*/\1/')
-ssh arch 'rm -rf /dev/shm/gpodder-build && mkdir -p /dev/shm/gpodder-build'
+# dpkg-buildpackage runs as root in the container and leaves root-owned
+# files behind, so the cleanup has to happen as root as well.
+ssh arch 'docker run --rm -v /dev/shm:/s ubuntu:20.04 rm -rf /s/gpodder-build >/dev/null 2>&1; rm -rf /dev/shm/gpodder-build; mkdir -p /dev/shm/gpodder-build'
 rsync -a --delete -e ssh --exclude .git "$HERE/" arch:/dev/shm/gpodder-build/gpodder/
 ssh arch 'docker run --rm -v /dev/shm/gpodder-build:/w -w /w/gpodder -e DEBIAN_FRONTEND=noninteractive ubuntu:20.04 sh -c "
   apt-get update -qq >/dev/null 2>&1
