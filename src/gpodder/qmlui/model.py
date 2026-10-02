@@ -34,6 +34,7 @@ from gpodder import download
 from gpodder import query
 from gpodder import model
 from gpodder import coverart
+from gpodder import streamproxy
 
 import os
 import urllib
@@ -102,11 +103,14 @@ class QEpisode(QObject):
     def _sourceurl(self):
         if self._episode.was_downloaded(and_exists=True):
             url = self._episode.local_filename(create=False)
-        elif self._qt_yt_url is not None:
-            url = self._qt_yt_url
         else:
-            url = youtube.get_real_download_url(self._episode.url)
-            self._qt_yt_url = url
+            if self._qt_yt_url is None:
+                self._qt_yt_url = youtube.get_real_download_url(
+                        self._episode.url)
+            # The media player's gstreamer has no SSL support, so an
+            # https stream has to go through the local relay instead
+            # (gpodder.streamproxy; returns the URL as-is for plain http)
+            url = streamproxy.register(self._qt_yt_url)
         return convert(url)
 
     qsourceurl = Property(unicode, _sourceurl, notify=source_url_changed)

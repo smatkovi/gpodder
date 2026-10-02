@@ -47,6 +47,7 @@ from gpodder import core
 from gpodder import util
 from gpodder import my
 from gpodder import query
+from gpodder import streamproxy
 from gpodder import common
 from gpodder import youtube
 
@@ -433,7 +434,8 @@ class Controller(QObject):
 
         url = episode.get_playback_url()
         if gpodder.ui.harmattan:
-            subprocess.Popen(['video-suite', url])
+            # video-suite is gstreamer-based too and cannot do https
+            subprocess.Popen(['video-suite', streamproxy.register(url)])
         else:
             util.gui_open(url)
 
