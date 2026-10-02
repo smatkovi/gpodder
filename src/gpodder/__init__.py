@@ -35,6 +35,14 @@ import platform
 import gettext
 import locale
 
+# Harmattan: route HTTPS through a newer libssl (TLS 1.2/1.3) if available
+# and keep Qt's lazily loaded OpenSSL consistent (see tlsfix.py)
+try:
+    from gpodder import tlsfix
+    tlsfix.install()
+except Exception, _tls_error:
+    print >>sys.stderr, 'tlsfix not active:', _tls_error
+
 # Check if real hard dependencies are available
 try:
     import feedparser

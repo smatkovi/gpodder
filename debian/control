@@ -22,6 +22,9 @@ Description: A podcast aggregator for the Nokia N950 and N9
  .
  Different versions for several platforms and devices exist.
  This is the Harmattan-optimized version of gPodder.
+ .
+ This build adds TLS 1.2/1.3 support for HTTPS feeds via the
+ OpenSSL 1.1.1 library in /opt/wunderw/lib (ctypes, no rebuild).
 XB-Maemo-Display-Name: gPodder Podcast Client
 XB-Maemo-Display-Name-pl_PL: Klient podcastów gPodder
 XB-Maemo-Display-Name-de_DE: gPodder Podcast-Client
